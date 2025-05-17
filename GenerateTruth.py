@@ -9,7 +9,10 @@ output_data = "SCENE_DATA"
 # Generate a bit of random noise on the dets
 # I want this to auto generate the correct truth assignment
     # This will take into account the cost of non-association 
-def write_frame_to_csv(frame, detections, tracks):
+
+
+# REMOVE THE EXTRA PADDED COMMAS
+def write_frame_to_csv(frame, detections, tracks, truth_ass):
     csv_filename = f'SCENE_DATA/output.csv'
     dataFrameDets = pd.DataFrame(detections,columns=['x','y'])
     dataFrameDets['frame'] = frame
@@ -21,6 +24,9 @@ def write_frame_to_csv(frame, detections, tracks):
     dataFrameTracks['id'] = dataFrameTracks.index
     dataFrameAll = pd.concat([dataFrameDets,dataFrameTracks], ignore_index=True)
     dataFrameAll = dataFrameAll[['frame','type','id','x','y']]
+    truthRow = [frame, "truth_assignments"] + np.array(truth_ass).tolist()
+    dataFrameTruth = pd.DataFrame([truthRow])
+    dataFrameAll = pd.concat([dataFrameAll, dataFrameTruth], ignore_index=True)
     # Append or write CSV
     mode = 'a' if frame > 0 else 'w'  # Append after first frame
     header = (frame == 0)
@@ -97,7 +103,7 @@ for frame in range(2):
                                             pDet = 0.75, 
                                             seed=frame)
 
-    write_frame_to_csv(frame, detections, tracks)
+    write_frame_to_csv(frame, detections, tracks, truth_ass)
 
     plt.figure(figsize=(12,12))
     plt.scatter(tracks[:,0], tracks[:,1], c='green', marker='D', label='Tracks')
