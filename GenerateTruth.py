@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import pandas as pd
+import csv
 output_images = "SCENE_FIGS"
 output_data = "SCENE_DATA"
 # I want to generate a random set of truth objects, set A 
@@ -11,26 +11,17 @@ output_data = "SCENE_DATA"
     # This will take into account the cost of non-association 
 
 
-# REMOVE THE EXTRA PADDED COMMAS
-def write_frame_to_csv(frame, detections, tracks, truth_ass):
-    csv_filename = f'SCENE_DATA/output.csv'
-    dataFrameDets = pd.DataFrame(detections,columns=['x','y'])
-    dataFrameDets['frame'] = frame
-    dataFrameDets['type'] = 'detection'
-    dataFrameDets['id'] = dataFrameDets.index
-    dataFrameTracks = pd.DataFrame(tracks, columns=['x', 'y'])
-    dataFrameTracks['frame'] = frame
-    dataFrameTracks['type'] = 'track'
-    dataFrameTracks['id'] = dataFrameTracks.index
-    dataFrameAll = pd.concat([dataFrameDets,dataFrameTracks], ignore_index=True)
-    dataFrameAll = dataFrameAll[['frame','type','id','x','y']]
-    truthRow = [frame, "truth_assignments"] + np.array(truth_ass).tolist()
-    dataFrameTruth = pd.DataFrame([truthRow])
-    dataFrameAll = pd.concat([dataFrameAll, dataFrameTruth], ignore_index=True)
-    # Append or write CSV
-    mode = 'a' if frame > 0 else 'w'  # Append after first frame
-    header = (frame == 0)
-    dataFrameAll.to_csv(csv_filename, mode=mode, header=header, index=False)
+def write_frame_to_csv2(frame, detections, tracks, truth_ass):
+    with open(output_data+"/scene.csv", "a",newline='') as f:
+        writer = csv.writer(f)
+        for detIdx in range(len(detections)):
+            detRow = [frame, "detection", detIdx, detections[detIdx, 0], detections[detIdx,1]]
+            writer.writerow(detRow)
+        for trkIdx in range(len(tracks)):
+            trackRow = [frame, "track", trkIdx, tracks[trkIdx, 0], tracks[trkIdx,1]]
+            writer.writerow(trackRow)
+        truthRow = [frame, "truthAss"] + list(truth_ass)
+        writer.writerow(truthRow)
 
 def add_noise(dets, std=0.1111):
     dets = np.array(dets)
@@ -98,12 +89,13 @@ ROWS = 1024
 COLS = 1024
 TRACKS = 35
 costArray = []
-for frame in range(2):
+for frame in range(3):
     cost, tracks, detections, truth_ass = gen_ass_problem(nTruth = TRACKS,
-                                            pDet = 0.75, 
+                                            pDet = 0.5,
+                                            faRate = 200, 
                                             seed=frame)
 
-    write_frame_to_csv(frame, detections, tracks, truth_ass)
+    write_frame_to_csv2(frame, detections, tracks, truth_ass)
 
     plt.figure(figsize=(12,12))
     plt.scatter(tracks[:,0], tracks[:,1], c='green', marker='D', label='Tracks')
