@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import csv
-import math
+from scipy.optimize import linear_sum_assignment
 output_images = "SCENE_FIGS"
 output_data = "SCENE_DATA"
 # I want to generate a random set of truth objects, set A 
@@ -94,7 +94,8 @@ def gen_ass_problem(
     if seed is not None:
         np.random.seed(seed)
     # Generate cost of non-association
-    cNA = -np.log(1-pDet)
+    cNA = -np.log(0.3*(1-pDet))
+    print(cNA)
     # cost_false_alarm = -np.log(faRate/volume)
     # Generate the tracks
     tracks = random_tracks(nTruth,rows,cols,seed)
@@ -109,9 +110,18 @@ def gen_ass_problem(
         for det in range(len(detections)):
             diff = tracks[trk] - detections[det]
             cost_matrix[trk, det] = np.sqrt(diff.T @ np.linalg.inv(S) @ diff)
-    # Run in through the Munkre to generate the truth assignment
-    cNA_col = np.full(len(tracks), cNA)
+    print("Det 213: ")
+    print(detections[det])
+    cNA_col = np.full((len(tracks), len(tracks)), cNA)
     cost_matrix = np.column_stack((cost_matrix, cNA_col))
+    # Run in through the Munkre to generate the truth assignment
+    row_ind, col_ind = linear_sum_assignment(cost_matrix)
+    print(row_ind)
+    print(col_ind)
+    print("Cost(0,31):")
+    print(cost_matrix[0,31])
+    print("Cost(0,51):")
+    print(cost_matrix[0,51])
 
     return cNA, tracks, detections, cost_matrix
 
@@ -125,30 +135,31 @@ costArray = []
 for frame in range(1):
     cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem( nTruth  = TRACKS,
                                                                                 pDet    = 0.85,
-                                                                                faRate  = 20, 
+                                                                                faRate  = 200, 
                                                                                 seed    = frame,
                                                                                 stdDets = 0.3333,
                                                                                 stdTrks = 0.1111)
     
+    # write_frame_to_csv2(frame, detections, tracks, truth_ass)
+
     plt.figure(figsize=(6, 6))
     plt.imshow(cost_matrix, origin='lower', cmap='viridis')
     plt.colorbar(label='Cost')
     plt.xlabel('Detections')
     plt.ylabel('Tracks')
     plt.title('Cost Matrix Visualization')
+    filename = os.path.join(output_images, f"scene_{frame}.png")
+    plt.savefig(filename)
+    plt.close()
+
+    plt.figure(figsize=(12,12))
+    plt.scatter(tracks[:,0], tracks[:,1], c='green', marker='D', label='Tracks')
+    for i, (x, y) in enumerate(tracks):
+        plt.text(x-2, y-2, str(i), fontsize=8, color='black')
+
+    plt.scatter(detections[:,0], detections[:,1], c='r', marker='.', label='Detections')
+    for i, (x, y) in enumerate(detections):
+        plt.text(x + 2, y + 2, str(i), fontsize=8, color='black')
+    plt.legend(loc='upper right')
+    plt.title("Tracks and Detections Scene")
     plt.show()
-    # write_frame_to_csv2(frame, detections, tracks, truth_ass)
-
-    # plt.figure(figsize=(12,12))
-    # plt.scatter(tracks[:,0], tracks[:,1], c='green', marker='D', label='Tracks')
-    # for i, (x, y) in enumerate(tracks):
-    #     plt.text(x-10, y-10, str(i), fontsize=8, color='black')
-
-    # plt.scatter(detections[:,0], detections[:,1], c='r', marker='.', label='Detections')
-    # for i, (x, y) in enumerate(detections):
-    #     plt.text(x + 2, y + 2, str(i), fontsize=8, color='black')
-    # plt.legend(loc='upper right')
-    # plt.title("Tracks and Detections Scene")
-    # filename = os.path.join(output_images, f"scene_{frame}.png")
-    # plt.savefig(filename)
-    # plt.close()

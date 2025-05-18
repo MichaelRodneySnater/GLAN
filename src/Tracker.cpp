@@ -77,7 +77,7 @@ void Tracker::updateTrackEstPosition()
             residual(1) = m_dets.detList[m_tracks.trackFiles[tf].corrDet].pos[1] - m_tracks.trackFiles[tf].predState(1);
 
             // Compute the Track Estimated Position
-            m_tracks.trackFiles[tf].estState = m_tracks.trackFiles[tf].predState + m_tracks.trackFiles[tf].K * residual;
+            m_tracks.trackFiles[tf].estState = m_tracks.trackFiles[tf].estState + m_tracks.trackFiles[tf].K * residual;
 
             // Compute the Estimate Covariance 
             m_tracks.trackFiles[tf].estCov = (MatrixXd::Identity(4,4) - m_tracks.trackFiles[tf].K * m_tracks.H) * m_tracks.trackFiles[tf].predCov;
