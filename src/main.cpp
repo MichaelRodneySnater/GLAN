@@ -1,4 +1,5 @@
 #include "SceneParser.hpp"
+#include "AlgoRunner.hpp"
 #include "Utilties.hpp"
 
 int main(void)
@@ -7,8 +8,12 @@ int main(void)
     std::unique_ptr<SceneParser> sceneReader = std::make_unique<SceneParser>(costMatrix);
     sceneReader->ReadInCsv();
 
-    std::cout << "Number of Matricies: " << costMatrix.size() << std::endl;
-
+    // Run the Hungarian
+    std::unique_ptr<AlgoRunner> runner = std::make_unique<AlgoRunner>();
+    runner->setAlgorithm(Util::HUNGARIAN);
+    runner->setCostMatrix(costMatrix[0]);
+    runner->run();
+    runner->print_assignment();
     // // Read in the scene data from output.csv
     // std::vector<FrameData> frames = sceneRead->readInScenes();
 

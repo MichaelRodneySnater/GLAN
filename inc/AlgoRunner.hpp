@@ -16,9 +16,18 @@ public:
     AlgoRunner();
     ~AlgoRunner();
 
+    void setCostMatrix(const std::vector<std::vector<double>>& costMatrix);
     void setAlgorithm(const Util::ALGORITHM alg);
+    void run(void);
+    void runHungarian(void);
+    void print_assignment(void) const;
 
     Util::ALGORITHM lapAlgo_;
     std::vector<int> assignment_;
+    const std::vector<std::vector<double>>* costMatrix_;
+
+
+    // CONSTS
+    const double INF = std::numeric_limits<double>::infinity();
 
 };
