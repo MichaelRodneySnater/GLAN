@@ -1,6 +1,5 @@
 #include "SceneParser.hpp"
-#include <memory>
-#include <iostream>
+#include "Utilties.hpp"
 
 int main(void)
 {

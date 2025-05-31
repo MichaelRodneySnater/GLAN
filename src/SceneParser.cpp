@@ -1,13 +1,9 @@
 #include "SceneParser.hpp"
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include "Utilties.hpp"
 
 SceneParser::SceneParser(std::vector<std::vector<std::vector<double>>>& costMatrix)
 : fileName_("SCENE_DATA/matricies.csv")
 , costMatrix_(costMatrix)
-, numMatricies_(0)
 {
 }
 

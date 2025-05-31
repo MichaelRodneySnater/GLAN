@@ -1,6 +1,5 @@
 # pragma once
-#include <string>
-#include <vector>
+#include "Utilties.hpp"
 
 class SceneParser {
     public:
@@ -16,5 +15,4 @@ class SceneParser {
         // [MATRIX][ROWS][COLS]
         std::vector<std::vector<std::vector<double>>>& costMatrix_;
         int numMatricies_;
-        const int MAX_MATRICIES = 1000;
 };

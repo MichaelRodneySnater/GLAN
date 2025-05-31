@@ -23,6 +23,7 @@ configure_file(
 set(SOURCES
     src/main.cpp
     src/SceneParser.cpp
+    src/AlgoRunner.cpp
 )
 
 # 1) Define the executable target
