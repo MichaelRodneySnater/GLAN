@@ -109,21 +109,22 @@ def gen_ass_problem(
 # 70% GO
 ROWS = 1024
 COLS = 1024
-TRACKS = 35
+TRUTH_OBJ = 80
 costArray = []
 output_file_path = output_data+"/matricies.csv"
 
 # Generate Scene
 for matrix in range(5):
-    cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = TRACKS,
-                                                                    pDet    = 0.5,
-                                                                    faRate  = 35, 
-                                                                    seed    = matrix,
-                                                                    stdDets = 0.3333,
-                                                                    stdTrks = 0.1111)
-    
+    cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = TRUTH_OBJ,    # Number of real objects in scene
+                                                                    pDet    = 0.9,          # Probability of truth object producing a detection 
+                                                                    faRate  = 20,           # False detections per frame
+                                                                    seed    = matrix,       # Python random number gen seed
+                                                                    stdDets = 0.3333,       # standard deviation detections, meas noise
+                                                                    stdTrks = 0.1111)       # track postional standard deviation, P00
+    # Populate csv with this cost matrix and frame info
     write_cost_matrix_to_csv(matrix, cost_matrix, len(tracks), len(detections), output_file_path)
     
+    # Generate and save an image of the cost matrix
     plt.figure(figsize=(6, 6))
     plt.imshow(cost_matrix, cmap='viridis')
     plt.colorbar(label='Cost')
@@ -133,12 +134,11 @@ for matrix in range(5):
     filename = os.path.join(output_images, f"costMatrix_{matrix}.png")
     plt.savefig(filename)
     plt.close()
-
+    # Generate and save an image of the dets and tracks scene
     plt.figure(figsize=(12,12))
     plt.scatter(tracks[:,0], tracks[:,1], c='green', marker='D', label='Tracks')
     for i, (x, y) in enumerate(tracks):
-        plt.text(x-10, y-2, str(i), fontsize=8, color='black')
-
+        plt.text(x-10, y-10, str(i), fontsize=8, color='black')
     plt.scatter(detections[:,0], detections[:,1], c='r', marker='.', label='Detections')
     for i, (x, y) in enumerate(detections):
         plt.text(x + 2, y + 2, str(i), fontsize=8, color='black')
