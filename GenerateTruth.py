@@ -27,17 +27,17 @@ def square_cost_matrix(C, C_na):
     
     return C_sq
 
-def write_frame_to_csv2(frame, detections, tracks, truth_ass):
-    with open(output_data+"/scene.csv", "a",newline='') as f:
+def write_cost_matrix_to_csv(matrix_number, cost_matrix, output_file_path):
+    with open(output_file_path, "a", newline='') as f:
         writer = csv.writer(f)
-        for detIdx in range(len(detections)):
-            detRow = [frame, "detection", detIdx, detections[detIdx, 0], detections[detIdx,1]]
-            writer.writerow(detRow)
-        for trkIdx in range(len(tracks)):
-            trackRow = [frame, "track", trkIdx, tracks[trkIdx, 0], tracks[trkIdx,1]]
-            writer.writerow(trackRow)
-        truthRow = [frame, "truthAss"] + list(truth_ass)
-        writer.writerow(truthRow)
+        
+        # Write header for this matrix
+        writer.writerow(["matrixNumber", matrix_number])
+        
+        # Write each row with "row, <row_idx>, <values...>"
+        for row_idx in range(cost_matrix.shape[0]):
+            row_data = ["row"] + list(cost_matrix[row_idx])
+            writer.writerow(row_data)
 
 def add_noise(dets, stdDets):
     dets = np.array(dets)
@@ -118,17 +118,19 @@ ROWS = 1024
 COLS = 1024
 TRACKS = 35
 costArray = []
+output_file_path = "SCENE_DATA/matricies.csv"
 
 # Generate Scene
-for frame in range(1):
+for matrix in range(1):
     cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = TRACKS,
                                                                     pDet    = 0.5,
                                                                     faRate  = 50, 
-                                                                    seed    = frame,
+                                                                    seed    = matrix,
                                                                     stdDets = 0.3333,
                                                                     stdTrks = 0.1111)
     
-    # write_frame_to_csv2(frame, detections, tracks, truth_ass)
+    write_cost_matrix_to_csv(matrix, cost_matrix, output_file_path)
+    # write_matricies_to_csv2(matrix, len(tracks), len(detections), cost_matrix)
 
     plt.figure(figsize=(6, 6))
     plt.imshow(cost_matrix, origin='lower', cmap='viridis')
@@ -136,7 +138,7 @@ for frame in range(1):
     plt.xlabel('Detections')
     plt.ylabel('Tracks')
     plt.title('Cost Matrix Visualization')
-    filename = os.path.join(output_images, f"scene_{frame}.png")
+    filename = os.path.join(output_images, f"scene_{matrix}.png")
     plt.savefig(filename)
     plt.close()
 
