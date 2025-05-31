@@ -17,6 +17,8 @@ public:
     ~AlgoRunner();
 
     void setCostMatrix(const std::vector<std::vector<double>>& costMatrix);
+    void setNumTracks(const int& numTracks);
+    void setNumDets(const int& numDets);
     void setAlgorithm(const Util::ALGORITHM alg);
     void run(void);
     void runHungarian(void);
@@ -25,6 +27,8 @@ public:
     Util::ALGORITHM lapAlgo_;
     std::vector<int> assignment_;
     const std::vector<std::vector<double>>* costMatrix_;
+    const int* numTracks_;
+    const int* numDets_;
 
 
     // CONSTS

@@ -4,6 +4,8 @@
 AlgoRunner::AlgoRunner()
 : lapAlgo_(Util::HUNGARIAN)
 , costMatrix_(nullptr)
+, numTracks_(nullptr)
+, numDets_(nullptr)
 {
 }
 
@@ -14,6 +16,16 @@ AlgoRunner::~AlgoRunner()
 void AlgoRunner::setCostMatrix(const std::vector<std::vector<double>>& costMatrix)
 {
     costMatrix_ = &costMatrix;
+}
+
+void AlgoRunner::setNumTracks(const int& numTracks)
+{
+    numTracks_ = &numTracks;
+}
+
+void AlgoRunner::setNumDets(const int& numDets)
+{
+    numDets_ = &numDets;
 }
 
 void AlgoRunner::setAlgorithm(const Util::ALGORITHM alg)
@@ -111,7 +123,16 @@ void AlgoRunner::runHungarian(void)
     // Populate the assignment array
     for (int j = 1; j <= n; ++j)
     {
-        assignment_[p[j] - 1] = j - 1;
+        if (j >= *numTracks_)
+        {
+            assignment_[p[j] - 1] = -1; // Assign the real tracks to -1
+            assignment_[j] = -1; // assign the tracks that represent a det being a false alarm
+        }
+        else
+        {
+            // Track assigned to detections
+            assignment_[p[j] - 1] = j - 1; // proper associaiton
+        }
     }
 
 }

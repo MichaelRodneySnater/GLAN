@@ -1,9 +1,13 @@
 #include "SceneParser.hpp"
 #include "Utilties.hpp"
 
-SceneParser::SceneParser(std::vector<std::vector<std::vector<double>>>& costMatrix)
+SceneParser::SceneParser(   std::vector<std::vector<std::vector<double>>>& costMatrix,
+                            std::vector<int>& numTracks,
+                            std::vector<int>& numDets)
 : fileName_("SCENE_DATA/matricies.csv")
 , costMatrix_(costMatrix)
+, numTracks_(numTracks)
+, numDets_(numDets)
 {
 }
 
@@ -37,6 +41,10 @@ void SceneParser::ReadInCsv(void)
         if (tokens[0] == "matrixNumber")
         {
             matrixNumber = std::stoi(tokens[1]);
+            numTracks_.push_back(std::stoi(tokens[2]));
+            numDets_.push_back(std::stoi(tokens[3]));
+
+            
         }
 
         if (matrixNumber >= costMatrix_.size())
