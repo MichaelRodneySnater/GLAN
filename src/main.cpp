@@ -4,6 +4,7 @@
 
 int main(void)
 {
+    std::unique_ptr<AlgoRunner> runner = std::make_unique<AlgoRunner>();
     // Populate Cost Matrix using csv parser class
     std::vector<std::vector<std::vector<double>>> costMatrix;
     std::vector<int> numTracks;
@@ -15,7 +16,6 @@ int main(void)
     // Run the Hungarian 
     for (int matrix = 0; matrix < costMatrix.size(); ++matrix)
     {
-        std::unique_ptr<AlgoRunner> runner = std::make_unique<AlgoRunner>();
         runner->setAlgorithm(Util::HUNGARIAN);
         runner->setCostMatrix(costMatrix[matrix]);
         runner->setNumTracks(numTracks[matrix]);
