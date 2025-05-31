@@ -11,7 +11,7 @@ class SceneParser {
     private:
 
         std::string fileName_;
-        std::vector<FrameData> frameData_;
-        int numberFrames_;
-        const int MAX_FRAMES = 1000;
+        std::vector<std::vector<double>> costMatrix_;
+        int numMatricies_;
+        const int MAX_MATRICIES = 1000;
 };

@@ -90,13 +90,11 @@ def gen_ass_problem(
     stdDets = 0.3333,
     stdTrks = 0.1111
 ):
-    volume = rows * cols
     if seed is not None:
         np.random.seed(seed)
     # Generate cost of non-association
     cNA = -np.log(0.3*(1-pDet))
-    print(cNA)
-    # cost_false_alarm = -np.log(faRate/volume)
+    print(f"Cost of Non-Association: {cNA}")
     # Generate the tracks
     tracks = random_tracks(nTruth,rows,cols,seed)
     # Generate detections based on pDet
@@ -110,18 +108,8 @@ def gen_ass_problem(
         for det in range(len(detections)):
             diff = tracks[trk] - detections[det]
             cost_matrix[trk, det] = np.sqrt(diff.T @ np.linalg.inv(S) @ diff)
-    print("Det 213: ")
-    print(detections[det])
     cNA_col = np.full((len(tracks), len(tracks)), cNA)
     cost_matrix = np.column_stack((cost_matrix, cNA_col))
-    # Run in through the Munkre to generate the truth assignment
-    row_ind, col_ind = linear_sum_assignment(cost_matrix)
-    print(row_ind)
-    print(col_ind)
-    print("Cost(0,31):")
-    print(cost_matrix[0,31])
-    print("Cost(0,51):")
-    print(cost_matrix[0,51])
 
     return cNA, tracks, detections, cost_matrix
 
@@ -133,12 +121,12 @@ costArray = []
 
 # Generate Scene
 for frame in range(1):
-    cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem( nTruth  = TRACKS,
-                                                                                pDet    = 0.85,
-                                                                                faRate  = 200, 
-                                                                                seed    = frame,
-                                                                                stdDets = 0.3333,
-                                                                                stdTrks = 0.1111)
+    cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = TRACKS,
+                                                                    pDet    = 0.5,
+                                                                    faRate  = 50, 
+                                                                    seed    = frame,
+                                                                    stdDets = 0.3333,
+                                                                    stdTrks = 0.1111)
     
     # write_frame_to_csv2(frame, detections, tracks, truth_ass)
 

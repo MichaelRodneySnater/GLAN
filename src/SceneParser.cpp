@@ -1,5 +1,4 @@
 #include "SceneParser.hpp"
-#include "Tracker.hpp"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -7,8 +6,8 @@
 
 SceneParser::SceneParser()
 : fileName_("SCENE_DATA/scene.csv")
-, frameData_(MAX_FRAMES)
-, numberFrames_(0)
+, costMatrix_()
+, numMatricies_(0)
 {
 }
 
@@ -25,7 +24,7 @@ void SceneParser::ReadInCsv(void)
     }
     std::string line;
 
-    int frameNumber{-1};
+    int matrixNumber{-1};
     while(std::getline(file,line))
     {
         std::stringstream ss(line);
@@ -39,34 +38,14 @@ void SceneParser::ReadInCsv(void)
         }
         
         // Id when new frame data is available
-        if (std::stoi(tokens[0]) != frameNumber)
+        if (std::stoi(tokens[0]) != matrixNumber)
         {
-            frameNumber = std::stoi(tokens[0]);
+            matrixNumber = std::stoi(tokens[0]);
         }
 
         if (tokens[1] == "detection")
         {
-            frameData_[frameNumber].detList_[std::stoi(tokens[2])].pos[0] = std::stof(tokens[3]);
-            frameData_[frameNumber].detList_[std::stoi(tokens[2])].pos[1] = std::stof(tokens[4]);
         }
-        if (tokens[1] == "track")
-        {
-            frameData_[frameNumber].trackList_[std::stoi(tokens[2])].predState(0) = std::stof(tokens[3]);
-            frameData_[frameNumber].trackList_[std::stoi(tokens[2])].predState(1) = std::stof(tokens[4]);
-        }
-        if (tokens[1] == "truthAss")
-        {   
-            auto &truth = frameData_[frameNumber].truthAssingment_;
-            truth.clear();
-            truth.reserve(tokens.size()-2);
-
-            for (size_t i = 2; i < tokens.size();++i)
-            {
-                truth.push_back(std::stoi(tokens[i]));
-            }
-            std::cout << "Size of truthAss: " << truth.size()<<std::endl;
-        }
-
     }
 
 }
