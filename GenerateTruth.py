@@ -109,15 +109,15 @@ def gen_ass_problem(
 # 70% GO
 ROWS = 1024
 COLS = 1024
-TRUTH_OBJ = 80
+TRUTH_OBJ = 96
 costArray = []
 output_file_path = output_data+"/matricies.csv"
 
 # Generate Scene
-for matrix in range(5):
+for matrix in range(3):
     cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = TRUTH_OBJ,    # Number of real objects in scene
-                                                                    pDet    = 0.9,          # Probability of truth object producing a detection 
-                                                                    faRate  = 20,           # False detections per frame
+                                                                    pDet    = 0.2,          # Probability of truth object producing a detection 
+                                                                    faRate  = 30,           # False detections per frame
                                                                     seed    = matrix,       # Python random number gen seed
                                                                     stdDets = 0.3333,       # standard deviation detections, meas noise
                                                                     stdTrks = 0.1111)       # track postional standard deviation, P00
