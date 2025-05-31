@@ -114,7 +114,7 @@ costArray = []
 output_file_path = output_data+"/matricies.csv"
 
 # Generate Scene
-for matrix in range(2):
+for matrix in range(5):
     cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = TRACKS,
                                                                     pDet    = 0.5,
                                                                     faRate  = 35, 

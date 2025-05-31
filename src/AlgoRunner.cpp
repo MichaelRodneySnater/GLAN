@@ -11,6 +11,7 @@ AlgoRunner::AlgoRunner()
 
 AlgoRunner::~AlgoRunner()
 {
+
 }
 
 void AlgoRunner::setCostMatrix(const std::vector<std::vector<double>>& costMatrix)
@@ -64,6 +65,12 @@ void AlgoRunner::print_assignment(void) const
         totalCost += (*costMatrix_)[i][assignment_[i]];
     }
     std::cout << std::fixed << std::setprecision(6) << "Total Cost: " << totalCost << std::endl;
+}
+
+void AlgoRunner::populateAssignmentArray(std::vector<int>& ass)
+{
+    ass.resize(*numTracks_);
+    ass = assignment_;
 }
 
 void AlgoRunner::runHungarian(void)
@@ -134,5 +141,6 @@ void AlgoRunner::runHungarian(void)
             assignment_[p[j] - 1] = j - 1; // proper associaiton
         }
     }
+    assignment_.resize(*numTracks_);
 
 }

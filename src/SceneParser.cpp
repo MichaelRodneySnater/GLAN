@@ -12,7 +12,11 @@ SceneParser::SceneParser(   std::vector<std::vector<std::vector<double>>>& costM
 }
 
 SceneParser::~SceneParser()
-{}
+{
+    // delete costMatrix_;
+    // delete numTracks_;
+    // delete numDets_;
+}
 
 void SceneParser::ReadInCsv(void)
 {

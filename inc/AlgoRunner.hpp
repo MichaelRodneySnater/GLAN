@@ -19,6 +19,7 @@ public:
     void setCostMatrix(const std::vector<std::vector<double>>& costMatrix);
     void setNumTracks(const int& numTracks);
     void setNumDets(const int& numDets);
+    void populateAssignmentArray(std::vector<int>& assignmentArray); 
     void setAlgorithm(const Util::ALGORITHM alg);
     void run(void);
     void runHungarian(void);
