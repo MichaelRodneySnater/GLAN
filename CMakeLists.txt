@@ -10,12 +10,12 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(Boost REQUIRED COMPONENTS system)
 
 # 1. Tell CMake where the source CSV lives
-set(SCENE_CSV_IN  ${CMAKE_SOURCE_DIR}/SCENE_DATA/scene.csv)
+set(SCENE_CSV_IN  ${CMAKE_SOURCE_DIR}/SCENE_DATA/matricies.csv)
 
 # 2. Tell CMake to copy it into your build directory at configure time
 configure_file(
   ${SCENE_CSV_IN}
-  ${CMAKE_BINARY_DIR}/SCENE_DATA/scene.csv
+  ${CMAKE_BINARY_DIR}/SCENE_DATA/matricies.csv
   COPYONLY
 )
 
@@ -23,8 +23,6 @@ configure_file(
 set(SOURCES
     src/main.cpp
     src/SceneParser.cpp
-    src/Tracker.cpp
-    src/FrameData.cpp
 )
 
 # 1) Define the executable target

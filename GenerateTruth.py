@@ -36,7 +36,7 @@ def write_cost_matrix_to_csv(matrix_number, cost_matrix, output_file_path):
         
         # Write each row with "row, <row_idx>, <values...>"
         for row_idx in range(cost_matrix.shape[0]):
-            row_data = ["row"] + list(cost_matrix[row_idx])
+            row_data = ["row", row_idx] + list(cost_matrix[row_idx])
             writer.writerow(row_data)
 
 def add_noise(dets, stdDets):
@@ -118,10 +118,10 @@ ROWS = 1024
 COLS = 1024
 TRACKS = 35
 costArray = []
-output_file_path = "SCENE_DATA/matricies.csv"
+output_file_path = output_data+"/matricies.csv"
 
 # Generate Scene
-for matrix in range(1):
+for matrix in range(2):
     cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = TRACKS,
                                                                     pDet    = 0.5,
                                                                     faRate  = 50, 
