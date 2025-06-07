@@ -109,20 +109,22 @@ def gen_ass_problem(
 # 70% GO
 ROWS = 1024
 COLS = 1024
-TRUTH_OBJ = 96
+TRUTH_OBJ = 5
 costArray = []
 output_file_path = output_data+"/matricies.csv"
 
 # Generate Scene
-for matrix in range(3):
+for matrix in range(1):
     cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = TRUTH_OBJ,    # Number of real objects in scene
-                                                                    pDet    = 0.2,          # Probability of truth object producing a detection 
-                                                                    faRate  = 30,           # False detections per frame
+                                                                    pDet    = 0.7,          # Probability of truth object producing a detection 
+                                                                    faRate  = 5,           # False detections per frame
                                                                     seed    = matrix,       # Python random number gen seed
                                                                     stdDets = 0.3333,       # standard deviation detections, meas noise
                                                                     stdTrks = 0.1111)       # track postional standard deviation, P00
     # Populate csv with this cost matrix and frame info
-    write_cost_matrix_to_csv(matrix, cost_matrix, len(tracks), len(detections), output_file_path)
+    numTracks = len(tracks)
+    numDets = len(detections)
+    write_cost_matrix_to_csv(matrix, cost_matrix, numTracks, numDets, output_file_path)
     
     # Generate and save an image of the cost matrix
     plt.figure(figsize=(6, 6))
@@ -147,3 +149,18 @@ for matrix in range(3):
     filename = os.path.join(output_images, f"scene_{matrix}.png")
     plt.savefig(filename)
     plt.close()
+
+    row_ind, col_ind = linear_sum_assignment(cost_matrix)
+    print(row_ind)
+    print(col_ind)
+    print(f"Num Tracks: {numTracks}")
+    print(f"Num   Dets: {numDets}")
+    print("\n")
+    truth = np.zeros(numTracks)
+    for track in range(numTracks):
+        if col_ind[row_ind[track]] >= numDets:
+            truth[track] = -1
+        else:
+            truth[track] = col_ind[track]
+
+    print(f"Assignment Array: {truth}")
