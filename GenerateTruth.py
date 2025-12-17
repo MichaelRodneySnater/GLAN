@@ -49,8 +49,12 @@ def add_noise(dets, stdDets):
 
 def generate_dets(rows, cols, tracks, pDet, faRate, stdDets):
     dets = []
+    draws = []
     for ii in range(len(tracks)):
-        if np.random.rand() < pDet:
+        n = np.random.uniform(0, 1)
+        draws.append(n)
+        # print(n)
+        if n < pDet:
             dets.append(tracks[ii])
     # Add the false alarms
     x = np.random.uniform(0, rows, faRate)
@@ -60,6 +64,8 @@ def generate_dets(rows, cols, tracks, pDet, faRate, stdDets):
     # Add white noise to the measurements
     noisyDets = add_noise(dets,stdDets)
     # return noisyDets, truthAss
+
+    print(sum(z > pDet for z in draws))
     return noisyDets
 
 
@@ -72,7 +78,7 @@ def random_tracks(X, rows, cols, seed=None):
     trackObjects = np.stack((x,y), axis=1)
     return trackObjects
 
-def gen_ass_problem(
+def gen_association_problem(
     seed = None,
     pDet = 0.75, # probability of sensor detects
     faRate = 20, # false alarms per frame
@@ -114,17 +120,18 @@ truthArrays = []
 output_file_path = output_data+"/matricies.csv"
 
 # Generate Scene
-NUM_MATRICIES = 3
+NUM_MATRICIES = 10
 for matrix in range(NUM_MATRICIES):
 
-    trackObjects = np.random.randint(1,15)
+    # trackObjects = np.random.randint(1,15)
+    trackObjects = 100
 
-    cost_non_ass, tracks, detections, cost_matrix = gen_ass_problem(nTruth  = trackObjects,    # Number of real objects in scene
-                                                                    pDet    = 0.9,          # Probability of truth object producing a detection 
-                                                                    faRate  = 14,            # False detections per frame
-                                                                    seed    = matrix,       # Python random number gen seed
-                                                                    stdDets = 0.3333,       # standard deviation detections, meas noise
-                                                                    stdTrks = 0.1111)       # track postional standard deviation, P00
+    cost_non_ass, tracks, detections, cost_matrix = gen_association_problem(nTruth  = trackObjects, # Number of real objects in scene
+                                                                            pDet    = 0.50,          # Probability of truth object producing a detection 
+                                                                            faRate  = 14,           # False detections per frame
+                                                                            seed    = matrix,       # Python random number gen seed
+                                                                            stdDets = 0.3333,       # standard deviation detections, meas noise
+                                                                            stdTrks = 0.1111)       # track postional standard deviation, P00
     # Populate csv with this cost matrix and frame info
     numTracks = len(tracks)
     numDets = len(detections)
@@ -172,4 +179,4 @@ for matrix in range(NUM_MATRICIES):
     truthArrays.append(truth)
 
 # Print all the truth arrays
-print(f"Assignment ArraySSSS: {truthArrays}")
+print(f"Assignment Array: {truthArrays}")
